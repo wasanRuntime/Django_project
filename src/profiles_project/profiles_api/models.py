@@ -4,29 +4,39 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 # Create your models here.
 
-class UserProfileManager():
+class UserProfileManager( BaseUserManager):
     """Helps user work with our custome user model"""
-    def create_user(self):
+    #def create_user(self):
+    def create_user(self, email, name, password=None, **extra_fields):
         """Creates a new user profile"""
         if not email:
             raise ValueError("User Must have email address.")
         email = self.normalize_email(email)
-        user = self.model(email = email, name = name)
+        user = self.model(email = email, name = name, **extra_fields)
 
         user.set_password(password)
         user.save(using = self._db)
 
         return user
-    def create_superuser(self, email, name, password):
+    def create_superuser(self, email, name, password = None, **extra_fields):
         """Creates and saves new superuser with given details"""
-        user = self.create_user(email, name, password)
+        #user = self.create_user(email, name, password=password)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-        user.is_superuser = True
-        user.is_staff = True
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
 
-        user.save(using = self._db)
+        return self.create_user(email, name, password, **extra_fields)
 
-        return user
+        #user.is_superuser = True
+        #user.is_staff = True
+
+        #user.save(using = self._db)
+
+        #return user
 
 
 
