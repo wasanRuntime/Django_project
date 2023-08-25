@@ -60,6 +60,6 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         return self.name
 
     def __str__(self):
-        """django uses this when itneeds to convert object into a string"""
+        """django uses this when it needs to convert object into a string"""
 
         return self.email
